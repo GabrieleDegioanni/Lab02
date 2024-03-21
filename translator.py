@@ -1,7 +1,9 @@
+import dictionary
+
 class Translator:
 
     def __init__(self):
-        self.dizionario = {}
+        self.dizionario = dictionary.Dictionary()
 
     def printMenu(self):
         # 1. Aggiungi nuova parola
@@ -14,42 +16,19 @@ class Translator:
         # dict is a string with the filename of the dictionary
         f = open(dict, "r").read().splitlines()
         for i in range(0, len(f)):
-            s = f[i].split(" ")
-            self.dizionario[s[0].lower()] = [s[1].lower()]
+            self.dizionario.addWord(f[i])
 
     def handleAdd(self, entry):
         # entry is a tuple <parola_aliena> <traduzione1 traduzione2 ...>
-        s = entry.split(" ")
-        if self.dizionario.get(s[0].lower()) is None:
-            self.dizionario[s[0].lower()] = []
-        for i in range(1, len(s)):
-            self.dizionario.get(s[0].lower()).append(s[i])
+        self.dizionario.addWord(entry)
 
     def handleTranslate(self, query):
         # query is a string <parola_aliena>
-        result = self.dizionario.get(query.lower())
-        return result
+        return self.dizionario.translate(query)
 
     def handleWildCard(self, query):
         # query is a string with a ? --> <par?la_aliena>
-        i = 0
-        for j in range(len(query)):
-            if query[j] == "?":
-                i = j
-                break
-        listaParole = []
-        lettere = "abcdefghijklmnopqrstuvwxyz"
-        for j in range(len(lettere)):
-            parola = ""
-            for k in range(len(query)):
-                if k == i:
-                    parola += lettere[j]
-                else:
-                    parola += query[k]
-            listaParole.append(parola)
-        result = []
-        for p in listaParole:
-            if self.handleTranslate(p) is not None:
-                result += self.handleTranslate(p)
-        return result
+        return self.dizionario.translateWordWildCard(query)
 
+    def stampa_dizionario(self):
+        return self.dizionario.stringa_dizionario()
